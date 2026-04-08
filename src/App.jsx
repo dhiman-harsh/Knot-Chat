@@ -1,6 +1,14 @@
+import Sidebar from './sections/Sidebar.jsx'
+import ChatList from './sections/ChatList.jsx'
+import ChatWindow from './sections/ChatWindow.jsx'
+
 const App = () => {
     return (
-        <div>Knot</div>
+        <div className="h-dvh flex gap-4 p-4">
+            <Sidebar />
+            <ChatList />
+            <ChatWindow />
+        </div>
     )
 }
 
