@@ -1,9 +1,9 @@
 const MyMessage = () => {
     return (
         <div className="flex justify-end">
-            <div className="p-2 rounded-md border flex flex-col max-w-6/10">
+            <div className="px-2 py-1 rounded-xl border flex flex-col max-w-6/10">
                 <div>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Error, quo!</div>
-                <div className="flex gap-2 items-center justify-end">
+                <div className="flex gap-2 items-center justify-end text-xs">
                     <span>09:03 PM</span>
                     <span>Unseen</span>
                 </div>
