@@ -3,7 +3,7 @@ const ChatWindowHeader = () => {
         <div className="border p-4 flex justify-between">
             {/* left section */}
             <div className="flex gap-4 items-center">
-                <span>Icon</span>
+                <span className="size-10 border rounded-lg"></span>
                 <div className="flex-1! flex flex-col">
                     <div className="text-lg font-semibold">Odama Studio</div>
                     <div className="text-sm">Mas Happy is typing...</div>
