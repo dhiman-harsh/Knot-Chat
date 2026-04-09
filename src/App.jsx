@@ -4,7 +4,7 @@ import ChatWindow from './sections/ChatWindow.jsx'
 
 const App = () => {
     return (
-        <div className="h-dvh flex gap-4 p-4">
+        <div className="h-dvh flex">
             <Sidebar />
             <ChatList />
             <ChatWindow />
