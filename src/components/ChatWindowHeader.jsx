@@ -1,6 +1,6 @@
 const ChatWindowHeader = () => {
     return (
-        <div className="border p-4 flex justify-between">
+        <div className="border px-4 py-2 flex justify-between">
             {/* left section */}
             <div className="flex gap-4 items-center">
                 <span className="size-10 border rounded-lg"></span>

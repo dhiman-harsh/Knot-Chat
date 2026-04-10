@@ -3,7 +3,7 @@ import Chats from '../components/Chats.jsx'
 
 const ChatList = () => {
     return (
-        <div className="w-80 border overflow-y-hidden">
+        <div className="w-80 border flex flex-col">
             <ChatListHeader />
             <Chats />
         </div>
