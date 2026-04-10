@@ -7,7 +7,7 @@ const ChatWindowMessages = ({ ref }) => {
         ref.current.scrollIntoView({ behavior: "smooth" })
     }, [ref])
     return (
-        <div className="flex-1! border flex flex-col gap-2 p-4 overflow-y-auto no-scrollbar">
+        <div className="flex-1! border flex flex-col gap-2 px-4 pt-4 pb-2 overflow-y-auto no-scrollbar">
             <OthersMessage />
             <MyMessage />
             <MyMessage />
