@@ -4,7 +4,7 @@ import SidebarHeader from '../components/SidebarHeader.jsx'
 
 const Sidebar = () => {
     return (
-        <div className="w-70 border flex flex-col">
+        <div className="w-60 border flex flex-col">
             <SidebarHeader />
             <SidebarMenu />
             <UserProfile />
