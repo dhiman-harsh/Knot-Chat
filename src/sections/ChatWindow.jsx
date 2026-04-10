@@ -6,7 +6,7 @@ import { useRef } from "react"
 const ChatWindow = () => {
     const ref = useRef()
     return (
-        <div className="flex-1! border flex flex-col justify-between">
+        <div className="flex-1! flex flex-col justify-between">
             <ChatWindowHeader />
             <ChatWindowMessages ref={ref} />
             <ChatWindowInputMessage />
