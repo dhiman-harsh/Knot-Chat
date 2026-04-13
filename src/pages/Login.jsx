@@ -1,8 +1,31 @@
-import { useContext } from "react"
+import { useActionState, useContext } from "react"
 import { ThemeContext } from "../context/ThemeSwitcher"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from '../firebase.js'
 
 const Login = () => {
+    const navigate = useNavigate()
+
+    const loginUser = () => {
+        const email = formData.get('email')
+        const password = formData.get('password')
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                navigate("/")
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
+    }
+
+    const [state, formAction, isPending] = useActionState(loginUser)
+
     const { theme } = useContext(ThemeContext)
     return (
         <div className={`min-h-dvh flex items-center justify-center ${theme == "light" ? 'bg-slate-100 text-slate-900' : 'bg-slate-900 text-slate-50'}`}>
@@ -11,7 +34,7 @@ const Login = () => {
                     <h1 className={`text-xl font-bold leading-tight tracking-tight md:text-2xl`}>
                         Sign in to your account
                     </h1>
-                    <form className={`space-y-4 md:space-y-6" action="#`}>
+                    <form className={`space-y-4 md:space-y-6" action="#`} action={formAction}>
                         <div>
                             <label for="email" className={`block mb-2 text-sm font-medium`}>Your email</label>
                             <input type="email" name="email" id="email" className={`rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 border ${theme == "light" ? 'bg-slate-100 border-slate-200' : 'bg-slate-900 border-slate-800'}`} placeholder="name@domain.com" required="" />
