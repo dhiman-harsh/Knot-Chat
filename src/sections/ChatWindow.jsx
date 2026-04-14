@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { AuthContext } from "../context/AuthContextProvider.jsx"
 import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore"
 import { db } from "../firebase.js"
+import { getDisplayName, getSafeEmail } from "../utils/userIdentity.js"
 
 const ChatWindow = () => {
     const bottomRef = useRef()
@@ -32,8 +33,8 @@ const ChatWindow = () => {
         await addDoc(collection(db, "publicMessages"), {
             text,
             uid: currentUser.uid,
-            senderEmail: currentUser.email ?? "anonymous@user",
-            senderName: currentUser.displayName ?? (currentUser.email?.split("@")[0] || "Anonymous"),
+            senderEmail: getSafeEmail(currentUser),
+            senderName: getDisplayName(currentUser),
             createdAt: serverTimestamp(),
             createdAtMs: Date.now(),
         })

@@ -3,6 +3,7 @@ import { auth } from '../firebase.js'
 import { onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebase.js";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { getDisplayName, getSafeEmail } from "../utils/userIdentity.js";
 
 export const AuthContext = createContext();
 
@@ -19,8 +20,8 @@ export const AuthContextProvider = ({ children }) => {
                         doc(db, "users", user.uid),
                         {
                             uid: user.uid,
-                            email: user.email ?? "",
-                            displayName: user.displayName ?? (user.email?.split("@")[0] || "Anonymous"),
+                            email: getSafeEmail(user),
+                            displayName: getDisplayName(user),
                             photoURL: user.photoURL ?? "",
                             lastSeenAt: serverTimestamp(),
                         },
