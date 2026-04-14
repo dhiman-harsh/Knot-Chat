@@ -15,7 +15,7 @@ const ChatWindow = () => {
     useEffect(() => {
         const messagesQuery = query(
             collection(db, "publicMessages"),
-            orderBy("createdAtMs", "asc")
+            orderBy("createdAt", "asc")
         )
         const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
             const mappedMessages = snapshot.docs.map((docItem) => ({
