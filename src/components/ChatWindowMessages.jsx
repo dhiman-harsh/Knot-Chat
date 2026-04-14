@@ -3,23 +3,23 @@ import MyMessage from "./MyMessage.jsx"
 import OthersMessage from "./OthersMessage.jsx"
 import { ThemeContext } from "../context/ThemeSwitcher.jsx"
 
-const ChatWindowMessages = ({ ref }) => {
+const ChatWindowMessages = ({ bottomRef, messages, currentUser }) => {
     const { theme } = useContext(ThemeContext)
+
     useEffect(() => {
-        ref.current.scrollIntoView({ behavior: "smooth" })
-    }, [ref])
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+    }, [messages, bottomRef])
+
     return (
         <div className={`flex-1! flex flex-col gap-2 px-4 pt-4 pb-2 overflow-y-auto no-scrollbar ${theme == "light" ? 'bg-slate-100' : 'bg-slate-900'}`}>
-            <OthersMessage />
-            <MyMessage />
-            <MyMessage />
-            <OthersMessage />
-            <OthersMessage />
-            <MyMessage />
-            <OthersMessage />
-            <OthersMessage />
-            <MyMessage />
-            <div ref={ref} className="h-0"></div>
+            {messages.map((message) =>
+                message.uid === currentUser?.uid ? (
+                    <MyMessage key={message.id} message={message} />
+                ) : (
+                    <OthersMessage key={message.id} message={message} />
+                )
+            )}
+            <div ref={bottomRef} className="h-0"></div>
         </div>
     )
 }

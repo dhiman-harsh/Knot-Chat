@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from '../firebase.js'
 import { onAuthStateChanged } from "firebase/auth";
+import { db } from "../firebase.js";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 export const AuthContext = createContext();
 
@@ -9,9 +11,25 @@ export const AuthContextProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setCurrentUser(user);
-            console.log(user)
+            try {
+                if (user) {
+                    await setDoc(
+                        doc(db, "users", user.uid),
+                        {
+                            uid: user.uid,
+                            email: user.email ?? "",
+                            displayName: user.displayName ?? (user.email?.split("@")[0] || "Anonymous"),
+                            photoURL: user.photoURL ?? "",
+                            lastSeenAt: serverTimestamp(),
+                        },
+                        { merge: true }
+                    );
+                }
+            } catch (error) {
+                console.error("Error syncing signed-in user:", error);
+            }
             setLoading(false);
         })
         return () => unsubscribe();
@@ -24,6 +42,6 @@ export const AuthContextProvider = ({ children }) => {
     )
 }
 
-export const userAuth = () => {
+export const useAuth = () => {
     return useContext(AuthContext);
 }
