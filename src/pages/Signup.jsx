@@ -1,12 +1,14 @@
 import { useActionState, useContext, useRef, useState } from "react"
 import { ThemeContext } from "../context/ThemeSwitcher"
 import { Link, useNavigate } from "react-router-dom"
-import { createUserWithEmailAndPassword } from "firebase/auth"
-import { auth } from '../firebase.js'
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { auth, db } from '../firebase.js'
+import { setDoc, doc } from 'firebase/firestore'
 
 const Signup = () => {
     const passRef = useRef()
     const confirmPassRef = useRef()
+    const [isNameEmpty, setIsNameEmpty] = useState(false)
     const [isEmailEmpty, setIsEmailEmpty] = useState(false)
     const [isMailProviderSupported, setIsMailProviderSupported] = useState(true)
     const [isPasswordEmpty, setIsPasswordEmpty] = useState(false)
@@ -25,12 +27,19 @@ const Signup = () => {
         }
     }
 
-    const createAccount = (prevState, formData) => {
+    const createAccount = async (prevState, formData) => {
+        const name = formData.get('name').trim()
         const email = formData.get('email').trim()
         const password = formData.get('password').trim()
         const confirmPassword = formData.get('confirm-password').trim()
         console.log("email:", email)
         console.log("password:", password)
+
+        if (name == '') {
+            setIsNameEmpty(true)
+        } else {
+            setIsNameEmpty(false)
+        }
 
         if (email == '') {
             setIsEmailEmpty(true)
@@ -60,26 +69,83 @@ const Signup = () => {
             const mailProvider = email.split("@")[1].split(".")[0]
             if (mailProvider == 'gmail' || mailProvider == 'outlook' || mailProvider == 'hotmail') {
                 setIsMailProviderSupported(true)
-                createUserWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {
-                        setIsSignUpSuccess(true)
-                        const user = userCredential.user
-                        navigate("/")
-                    })
-                    .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        console.log("error code:", errorCode)
-                        console.log("error message:", errorMessage)
-                        if (error.code == 'auth/network-request-failed') {
-                            setErrorMessage('Network issue! Try again later.')
-                        }
-                        else if(error.code = 'auth/email-already-in-use') {
-                            setErrorMessage('Email already in use!')
-                        } else {
-                            setErrorMessage('')
-                        }
-                    });
+
+                try {
+                    let res = await createUserWithEmailAndPassword(auth, email, password)
+                        await updateProfile(res.user, {
+                            displayName: name
+                        })
+
+                        await setDoc(doc(db, "users", res.user.uid), {
+                            userId: res.user.uid,
+                            displayName: name,
+                            email
+                        })
+
+                        await setDoc(doc(db, "userChats", res.user.uid), {})
+                        
+                    console.log(res.user)
+                    setIsSignUpSuccess(true)
+                    navigate("/")
+                }
+                catch (error) {
+                    console.log(error)
+                    console.error(error)
+                    if (error.code == 'auth/network-request-failed') {
+                        setErrorMessage('Network issue! Try again later.')
+                    }
+                    else if (error.code == 'auth/email-already-in-use') {
+                        setErrorMessage('Email already in use!')
+                    } else {
+                        setErrorMessage('')
+                    }
+                }
+
+                // createUserWithEmailAndPassword(auth, email, password)
+                //     .then((userCredential) => {
+                //         setIsSignUpSuccess(true)
+                //         const user = userCredential.user
+                //     })
+                //     .then(() => {
+                //         updateProfile(user, {
+                //             displayName: name
+                //         })
+                //             .then(() => {
+                //                 console.log("Profile Updated Successfully")
+                //             })
+                //             .catch((error) => {
+                //                 console.log(error.code)
+                //                 console.log(error.message)
+                //             })
+                //     })
+                //     .then(() => {
+                //         setDoc(doc(db, "users", user.uid), {
+                //             userId: user.uid,
+                //             displayName,
+                //             email,
+                //         })
+                //             .then(() => {
+                //                 console.log("User info saved in db")
+                //             })
+                //             .catch((error) => {
+                //                 console.log(error.code)
+                //                 console.log(error.message)
+                //             })
+                //     })
+                //     .catch((error) => {
+                //         const errorCode = error.code;
+                //         const errorMessage = error.message;
+                //         console.log("error code:", errorCode)
+                //         console.log("error message:", errorMessage)
+                //         if (error.code == 'auth/network-request-failed') {
+                //             setErrorMessage('Network issue! Try again later.')
+                //         }
+                //         else if (error.code = 'auth/email-already-in-use') {
+                //             setErrorMessage('Email already in use!')
+                //         } else {
+                //             setErrorMessage('')
+                //         }
+                //     });
             } else {
                 setIsMailProviderSupported(false)
             }
@@ -100,9 +166,19 @@ const Signup = () => {
                         errorMessage ? <p className="mt-1 text-medium text-sm text-red-600">{errorMessage}</p> : null
                     }
                     {
-                        isSignUpSuccess ? <p className="my-1 text-medium text-sm text-green-600 bg-green-300 border border-green-600 rounded-md p-2">Signed up succesfylly!</p> : null
+                        isSignUpSuccess ? <p className="my-1 text-medium text-sm text-green-600 bg-green-300 border border-green-600 rounded-md p-2">Signed up successfully!</p> : null
                     }
                     <form className={`space-y-4 md:space-y-6" action="#`} action={formAction}>
+                        <div>
+                            <label htmlFor="name" className={`block mb-2 text-sm font-medium`}>Your name</label>
+                            <input type="text" name="name" id="name" className={`text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 border ${theme == "light" ? 'bg-slate-100 border-slate-200' : 'bg-slate-900 border-slate-800'} ${(isNameEmpty) ? 'outline outline-red-600' : null}`} placeholder="Full Name" />
+                            {/* {
+                                !isMailProviderSupported ? <p className="mt-1.5 text-medium text-sm text-red-600">This email provider is not supported! Try with another email.</p> : null
+                            } */}
+                            {
+                                isNameEmpty ? <p className="mt-1.5 text-medium text-sm text-red-600">Name can't be empty!</p> : null
+                            }
+                        </div>
                         <div>
                             <label htmlFor="email" className={`block mb-2 text-sm font-medium`}>Your email</label>
                             <input type="email" name="email" id="email" className={`text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 border ${theme == "light" ? 'bg-slate-100 border-slate-200' : 'bg-slate-900 border-slate-800'} ${(isEmailEmpty || !isMailProviderSupported) ? 'outline outline-red-600' : null}`} placeholder="name@domain.com" />
