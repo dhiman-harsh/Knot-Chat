@@ -77,13 +77,17 @@ const Signup = () => {
                         })
 
                         await setDoc(doc(db, "users", res.user.uid), {
-                            userId: res.user.uid,
+                            uid: res.user.uid,
                             displayName: name,
                             email
                         })
 
-                        await setDoc(doc(db, "userChats", res.user.uid), {})
-                        
+                        try {
+                            await setDoc(doc(db, "userChats", res.user.uid), {})
+                        }
+                        catch(error) {
+                            console.log(error)
+                        }
                     console.log(res.user)
                     setIsSignUpSuccess(true)
                     navigate("/")

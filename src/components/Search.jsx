@@ -1,11 +1,13 @@
 import { useContext, useRef, useState } from "react"
 import { db } from '../firebase.js'
-import { collection, getDocs, query, where } from "firebase/firestore"
+import { collection, getDoc, getDocs, doc, query, serverTimestamp, where, setDoc, updateDoc } from "firebase/firestore"
 import { ThemeContext } from "../context/ThemeSwitcher"
+import { AuthContext } from "../context/AuthContextProvider.jsx"
 
 
 const Search = () => {
     const { theme } = useContext(ThemeContext)
+    const { currentUser } = useContext(AuthContext)
 
     const [username, setUsername] = useState('')
     const [user, setUser] = useState(null)
@@ -21,6 +23,8 @@ const Search = () => {
             const querySnapshot = await getDocs(q)
             querySnapshot.forEach((doc) => {
                 setUser(doc.data())
+                console.log(doc.data())
+                console.log(user)
             })
         }
         catch (error) {
@@ -29,15 +33,58 @@ const Search = () => {
         }
     }
 
-    const handleSelectUserForChat = () => {
-        // check if the group exists or not, if not just create a new one
-        
+    const handleSelectUserForChat = async () => {
+        console.log(user)
+        const combinedId = currentUser.uid > user.uid ? currentUser.uid + user.uid : user.uid + currentUser.uid
+        console.log(combinedId)
+        try {
+            const res = await getDoc(doc(db, "chats", combinedId))
+            if (!res.exists()) {
+                // check if the group exists or not, if not just create a new one
+                await setDoc(doc(db, "chats", combinedId), { messages: [] })
+
+                // create user chats
+                // userChats:{
+                //     janesId:{
+                //         combinedId:{
+                //             userInfo:{
+                //                 dn, img, id
+                //             }
+                //             lastMessage:"",
+                //             date:
+                //         }
+                //     }
+                // }
+
+                await updateDoc(doc(db, "userChats", currentUser.uid), {
+                    [combinedId + ".userInfo"]: {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                    },
+                    [combinedId + ".date"]: serverTimestamp()
+                })
+
+                await updateDoc(doc(db, "userChats", user.uid), {
+                    [combinedId + ".userInfo"]: {
+                        uid: currentUser.uid,
+                        displayName: currentUser.displayName,
+                    },
+                    [combinedId + ".date"]: serverTimestamp()
+                })
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
+
+        setUser(null)
+        setUsername('')
     }
 
     return (
         <div className="flex flex-col">
             <div className="flex justify-between">
-                <input type="text" className="bg-transparent text-black flex-1" onChange={(e)=>{setUsername(e.target.value)}} value={username}/>
+                <input type="text" className="bg-transparent text-black flex-1" onChange={(e) => { setUsername(e.target.value) }} value={username} />
                 <button onClick={handleSearch}>Search</button>
             </div>
             <div>
