@@ -7,7 +7,7 @@ const ChatList = () => {
         <div className="w-80 flex flex-col">
             <ChatListHeader />
             <Search />
-            <Chats />
+            <Chats/>
         </div>
     )
 }

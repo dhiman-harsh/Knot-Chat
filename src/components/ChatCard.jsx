@@ -1,11 +1,13 @@
 import { useContext } from 'react'
 import { ThemeContext } from '../context/ThemeSwitcher.jsx'
+import { AuthContext } from '../context/AuthContextProvider.jsx'
 
-const ChatCard = ({ displayName, lastMessage="Hello Harsh!" }) => {
+const ChatCard = ({ displayName, lastMessage, loadChats, userInfo }) => {
     const { theme } = useContext(ThemeContext)
+    const { currentUser } = useContext(AuthContext)
     return (
         // <ChatCard key={chat[0]} displayName={chat[1].userInfo.displayName} lastMessage={chat[1].userInfo.lastMessage?.text}/>
-        <div className={`flex gap-4 items-center p-1 rounded-lg cursor-pointer ${theme == "light" ? 'hover:bg-slate-100' : 'hover:bg-slate-900'}`}>
+        <div className={`flex gap-4 items-center p-1 rounded-lg cursor-pointer ${theme == "light" ? 'hover:bg-slate-100' : 'hover:bg-slate-900'}`} onClick={() => { loadChats(userInfo) }}>
             <span className="size-9 border rounded-lg"></span>
             <div className="flex-1! flex flex-col">
                 <div className="flex justify-between items-center">

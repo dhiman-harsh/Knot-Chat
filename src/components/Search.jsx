@@ -23,8 +23,6 @@ const Search = () => {
             const querySnapshot = await getDocs(q)
             querySnapshot.forEach((doc) => {
                 setUser(doc.data())
-                console.log(doc.data())
-                console.log(user)
             })
         }
         catch (error) {
@@ -34,27 +32,12 @@ const Search = () => {
     }
 
     const handleSelectUserForChat = async () => {
-        console.log(user)
         const combinedId = currentUser.uid > user.uid ? currentUser.uid + user.uid : user.uid + currentUser.uid
-        console.log(combinedId)
         try {
             const res = await getDoc(doc(db, "chats", combinedId))
             if (!res.exists()) {
                 // check if the group exists or not, if not just create a new one
                 await setDoc(doc(db, "chats", combinedId), { messages: [] })
-
-                // create user chats
-                // userChats:{
-                //     janesId:{
-                //         combinedId:{
-                //             userInfo:{
-                //                 dn, img, id
-                //             }
-                //             lastMessage:"",
-                //             date:
-                //         }
-                //     }
-                // }
 
                 await updateDoc(doc(db, "userChats", currentUser.uid), {
                     [combinedId + ".userInfo"]: {

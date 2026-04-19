@@ -1,16 +1,18 @@
 import { useContext } from 'react'
 import { ThemeContext } from '../context/ThemeSwitcher.jsx'
+import { ChatContext } from '../context/ChatContext.jsx'
 
 const ChatWindowHeader = () => {
     const { theme } = useContext(ThemeContext)
+    const { userInfo } = useContext(ChatContext)
     return (
         <div className="px-4 py-2 flex justify-between">
             {/* left section */}
             <div className="flex gap-4 items-center">
                 <span className="size-10 border rounded-lg"></span>
                 <div className="flex-1! flex flex-col">
-                    <div className="text-lg font-semibold">Odama Studio</div>
-                    <div className={`text-sm ${theme == "light" ? 'text-slate-600' : 'text-slate-300'}`}>Mas Happy is typing...</div>
+                    <div className="text-lg font-semibold">{userInfo?.displayName}</div>
+                    <div className={`text-sm ${theme == "light" ? 'text-slate-600' : 'text-slate-300'}`}>typing...</div>
                 </div>
             </div>
             {/* right section */}
