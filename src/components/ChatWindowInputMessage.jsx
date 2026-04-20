@@ -9,29 +9,31 @@ const ChatWindowInputMessage = () => {
     const { chatId, loadChats, userInfo } = useContext(ChatContext)
     const { currentUser } = useContext(AuthContext)
     const { theme } = useContext(ThemeContext)
-    const [inputMessage, setInputMessage] = useState()
+    const [inputMessage, setInputMessage] = useState('')
 
     const sendMessage = async () => {
-        try {
-            await updateDoc(doc(db, "chats", chatId), {
-                messages: arrayUnion({
-                    senderId: currentUser.uid,
-                    text: inputMessage,
-                    date: Timestamp.now()
+        if (inputMessage != '') {
+            try {
+                await updateDoc(doc(db, "chats", chatId), {
+                    messages: arrayUnion({
+                        senderId: currentUser.uid,
+                        text: inputMessage,
+                        date: Timestamp.now()
+                    })
                 })
-            })
 
-            await updateDoc(doc(db, "userChats", currentUser.uid), {
-                [chatId + ".lastMessage"]: {
-                    text: inputMessage
-                },
-                [chatId + ".date"]: serverTimestamp()
-            })
+                await updateDoc(doc(db, "userChats", currentUser.uid), {
+                    [chatId + ".lastMessage"]: {
+                        text: inputMessage
+                    },
+                    [chatId + ".date"]: serverTimestamp()
+                })
 
-            setInputMessage('')
-        }
-        catch (error) {
-            console.log(error)
+                setInputMessage('')
+            }
+            catch (error) {
+                console.log(error)
+            }
         }
     }
 
