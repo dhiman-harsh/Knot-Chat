@@ -11,18 +11,23 @@ const Chats = () => {
     const [chats, setChats] = useState([])
 
     useEffect(() => {
+        let unsub = null
         if (currentUser.uid) {
-            const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+            unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
                 setChats(doc.data())
             })
         }
 
-        return () => unsub()
+        return () => {
+            if (unsub) {
+                unsub()
+            }
+        }
     }, [currentUser.uid])
     return (
         <div className="flex-1! flex flex-col gap-1 px-2 py-4 overflow-y-auto no-scrollbar">
             {Object.entries(chats)?.map((chat) => (
-                <ChatCard key={chat[0]} displayName={chat[1].userInfo.displayName} lastMessage={chat[1].lastMessage?.text} loadChats={loadChats} userInfo={chat[1].userInfo} />
+                <ChatCard key={chat[0]} displayName={chat[1].userInfo.displayName} lastMessage={chat[1].lastMessage?.text} loadChats={loadChats} userInfo={chat[1].userInfo} timestamp={chat[1].date} />
             ))}
         </div>
     )
