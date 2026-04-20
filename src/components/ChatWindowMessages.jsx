@@ -4,6 +4,7 @@ import OthersMessage from "./OthersMessage.jsx"
 import { ThemeContext } from "../context/ThemeSwitcher.jsx"
 import { ChatContext } from "../context/ChatContext.jsx"
 import { AuthContext } from "../context/AuthContextProvider.jsx"
+import { v4 as uuidv4 } from 'uuid'
 
 const ChatWindowMessages = ({ ref }) => {
     const { currentUser } = useContext(AuthContext)
@@ -18,11 +19,11 @@ const ChatWindowMessages = ({ ref }) => {
                 messages.map((message) => {
                     if(message.senderId == currentUser.uid) {
                         return (
-                            <MyMessage message={message} />
+                            <MyMessage message={message} key={uuidv4()} />
                         )
                     } else {
                         return (
-                            <OthersMessage message={message} />
+                            <OthersMessage message={message} key={uuidv4()} />
                         )
                     }
                 })
