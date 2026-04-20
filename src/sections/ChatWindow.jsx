@@ -16,7 +16,7 @@ const ChatWindow = () => {
                     <ChatWindowHeader />
                     <ChatWindowMessages ref={ref} />
                     <ChatWindowInputMessage />
-                </div> : <div className={`h-full w-full flex justify-center items-center`}>
+                </div> : <div className={`h-full w-full flex justify-center items-center ${theme == "light" ? 'bg-slate-100' : 'bg-slate-900'}`}>
                     <span className={`${theme == "light" ? 'text-slate-600' : 'text-slate-300'}`}>Select a chat to start conversation.</span>
                 </div>
             }
