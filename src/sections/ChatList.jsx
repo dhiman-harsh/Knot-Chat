@@ -4,7 +4,7 @@ import Search from '../components/Search.jsx'
 
 const ChatList = () => {
     return (
-        <div className="w-80 flex flex-col">
+        <div className="h-full w-full md:w-80 flex flex-col">
             <ChatListHeader />
             <Search />
             <Chats/>

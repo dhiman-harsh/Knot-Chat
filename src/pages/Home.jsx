@@ -8,7 +8,7 @@ const Home = () => {
     const { theme } = useContext(ThemeContext)
     const [user, setUser] = useState()
     return (
-        <div className={`h-dvh flex ${theme == "light" ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-50'}`}>
+        <div className={`h-dvh w-full overflow-hidden flex ${theme == "light" ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-50'}`}>
             <Sidebar />
             <ChatList />
             <ChatWindow />

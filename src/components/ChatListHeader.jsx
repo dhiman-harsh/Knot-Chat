@@ -1,11 +1,13 @@
 import { useContext } from 'react'
 import { ThemeContext } from '../context/ThemeSwitcher.jsx'
+import { SidebarContext } from '../context/SidebarContext.jsx'
 
 const ChatListHeader = () => {
     const { theme, toggleTheme } = useContext(ThemeContext)
+    const { toggleSidebar } = useContext(SidebarContext)
     return (
         <div className="flex justify-between p-4">
-            <div className="md:hidden">
+            <div className="md:hidden" onClick={()=>{toggleSidebar()}}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill={`${theme == "light" ? '#475569' : '#CBD5E1'}`}><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
             </div>
             <div className="text-2xl">Messages</div>
